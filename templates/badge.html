@@ -3,22 +3,22 @@
 <head>
 	<title>Badge</title>
 	<style type="text/css">
-
 		@page {
 			margin: 0px;
 		}
-
 		.center{
 			display: block;
 			text-align: center;
 		}
 		.badge-head{
+			display: block;
 		}
 
 		.badge-title {
 			font-size: 1.4em;
 			font-weight: bold;
 			text-transform: uppercase;
+			display: block;
 		}
 
 		#badge_content {
@@ -50,14 +50,28 @@
 			font-size: 0.8em;
 		}
 
+		.logo {
+			width: 100px;
+			height: 100px;
+		}
+
 	</style>
 
 	<script type="text/javascript" src="/static/js/jquery.min.js"></script>
 </head>
 <body>
 	<div id="badge_content">
-		<span class="center badge-title">Варақаи қайди хонанда</span>
-		<span class="badge-head center"> Литсей барои хонандагони болаёқат дар ш. Душанбе </span>
+		<table>
+			<tr>
+				<td  style="padding-right: 40px;">
+					<img class="logo" src="/static/img/lfgs-logo.jpg">
+				</td>
+				<td>
+					<span class="badge-title">Варақаи қайди хонанда</span>
+					<span class="badge-head"> Литсей барои хонандагони болаёқат дар ш. Душанбе </span>
+				</td>
+			</tr>
+		</table>
 		<hr>
 		<table id="badge-table">
 			<tbody>
@@ -109,7 +123,6 @@
 			<p> Таърихи имтиҳон: 28.04.2019 </p>
 		</div>
 	</div>
-	<!-- <button id='print_button'>Print</button> -->
 
 	<script type="text/javascript">
 		function printBadge()
