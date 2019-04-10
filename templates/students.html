@@ -26,7 +26,7 @@
         		<tbody>
 					{% for student in students %}
         			<tr>
-        				<td>{{student.id}}</td>
+        				<td>{{"%04d" % student.id}}</td>
         				<td>{{student.name}}</td>
         				<td>{{student.surname}}</td>
         				<td>{{student.school}}</td>

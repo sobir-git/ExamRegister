@@ -23,7 +23,6 @@ bootstrap = Bootstrap(app)
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.mkdir(UPLOAD_FOLDER)
-    print("Created upload folder %s" % os.path.abspath(UPLOAD_FOLDER), file=open("out.txt", 'w'))
 
 
 def allowed_file(filename):
@@ -211,8 +210,7 @@ def delete_student(student_id):
     flash("Student %s %s %06d deleted successfully." % (student.name, student.surname, student_id))
     return redirect(url_for('students'))
 
+
 @app.route('/student_photo/<filename>')
 def student_photo(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
-
