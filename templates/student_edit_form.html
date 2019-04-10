@@ -50,6 +50,11 @@
 	</div>
 
 	<div class="form-group">
+		<label>Language</label>
+		<input type="text" name="language" class="form-control" value="{{student.language or ''}}" required>
+	</div>
+
+	<div class="form-group">
 		<label>Birthday</label>
 		<input type="date" name="birthday" value="{{student.birthday or ''}}" required>
 	</div>
@@ -59,7 +64,7 @@
 		<input type="file" name="photo" onchange="readURL(this);" accept="image/*">
 	</div>
 
-	<img id="photo" src="{{url_for('student_photo', filename=student.photo)}}" alt="Student photo"/>
+	<img id="photo" class="photo" src="{{url_for('student_photo', filename=student.photo)}}" alt="Student photo"/>
   
 	<br>
 	<br>

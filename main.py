@@ -45,6 +45,7 @@ class Student(db.Model):
     address = db.Column(db.String(160), nullable=False)
     birthday = db.Column(db.Date, nullable=False)
     photo = db.Column(db.String(80), nullable=False)
+    language = db.Column(db.String(80), nullable=False)
 
     def __repr__(self):
         return '<Student %s %s>' % (self.name, self.surname)
@@ -81,6 +82,7 @@ def add_student():
     address = form.get('address')
     school = form.get('school')
     grade = form.get('grade')
+    language = form.get('language')
 
     if 'photo' not in request.files:
         flash('No file part')
@@ -102,7 +104,7 @@ def add_student():
 
     student = Student(name=name, surname=surname, father_name=father_name, father_surname=father_surname,
                       mother_name=mother_name, mother_surname=mother_surname, phone=phone, birthday=birthday,
-                      address=address, school=school, grade=grade, photo=filename)
+                      address=address, school=school, grade=grade, photo=filename, language=language)
     db.session.add(student)
     db.session.commit()
     print("Added student successfully.")
@@ -133,9 +135,11 @@ def edit_student(student_id):
         mother_surname = form.get('mother_surname')
         phone = form.get('phone')
 
+
         if form.get('birthday'): birthday = date(*map(int, form.get('birthday').split('-')))
         else: birthday = None
 
+        language = form.get('language')
         address = form.get('address')
         school = form.get('school')
         grade = form.get('grade')
@@ -157,6 +161,7 @@ def edit_student(student_id):
         student.address = address
         student.school = school
         student.grade = grade
+        student.language = language
 
         if 'photo' in request.files:
             file = request.files['photo']
