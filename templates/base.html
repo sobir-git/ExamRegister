@@ -1,0 +1,39 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block title %}
+    {% if title %}{{ title }} - LFGS Exam{% else %}LFGS Exam Registration{% endif %}
+{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">LFGS Exam Registration</a>
+        </div>
+        <ul class="nav navbar-nav">
+          <li><a href="{{url_for('register')}}">Register</a></li>
+          <li><a href="{{url_for('students')}}">Students</a></li>
+        </ul>
+      </div>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {# application content needs to be provided in the app_content block #}
+        {% block app_content %}{% endblock %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+<script src="/static/js/jquery.min.js"></script>
+{% endblock %}
