@@ -12,10 +12,11 @@
 		}
 		.badge-head{
 			display: block;
+			font-size: 13pt;
 		}
 
 		.badge-title {
-			font-size: 1.4em;
+			font-size: 16pt;
 			font-weight: bold;
 			text-transform: uppercase;
 			display: block;
@@ -23,16 +24,17 @@
 
 		#badge_content {
 			border: 1px solid #333;
-			margin: 50px;
-			padding: 20px;
-			padding-left: 50px;
-			padding-right: 50px;
-			margin-top: 0px;
+			padding: 10px;
+			padding-left: 15px;
+			padding-right: 15px;
+			margin: 10px;
+			height: 45%;
+			width: 40%;
 		}
 
 		.photo {
-			width: 180px;
-			height: 180px;
+			width: 4cm;
+			height: 4cm;
 		}
 
 		.info-item {
@@ -45,16 +47,24 @@
 		}
 
 		#badge-table {
-			margin-top: 20px;
+			font-size: 12pt;
 		}
 
 		.foot {
-			font-size: 0.8em;
+			font-size: 10pt;
 		}
 
 		.logo {
-			width: 100px;
-			height: 100px;
+			width: 2.5cm;
+			height: 2.5cm;
+		}
+
+		.code {
+			font-family: Courier; 
+			font-weight: bold;
+			font-size: 11pt;
+			margin-top: 5px;
+			margin-bottom: 5px;
 		}
 
 	</style>
@@ -65,7 +75,7 @@
 	<div id="badge_content">
 		<table>
 			<tr>
-				<td  style="padding-right: 40px;">
+				<td  style="padding-right: 20px;">
 					<img class="logo" src="/static/img/lfgs-logo.jpg">
 				</td>
 				<td>
@@ -81,9 +91,9 @@
 					<td>
 						<img src="{{url_for('student_photo', filename=student.photo)}}" class="photo"/>
 						<br>
-						<p class="center" style="font-family: Courier; font-weight: bold;"> {{"%04d" % student.id}} </p> 
+						<p class="center code"> {{"%04d" % student.id}} </p> 
 					</td>
-					<td style="padding-left: 40px">
+					<td style="padding-left: 20px">
 						<table style="table-layout: fixed;">
 							<tbody>
 								<tr class="info-item">
@@ -122,7 +132,7 @@
 		</table>
 		<hr>
 		<div class="foot">
-			<p> Таърихи имтиҳон: 05.05.2019 соати 8:00 </p>
+			Санаи имтиҳон: 05.05.2019 соати 8:00
 		</div>
 	</div>
 
