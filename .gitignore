@@ -3,6 +3,7 @@ img/
 tmp/
 main.db
 test.db
+database.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

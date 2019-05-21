@@ -19,7 +19,7 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 app = Flask(__name__)
 app.secret_key = b'237rh[112*-whf912=-`][wf9q89w'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['BOOTSTRAP_SERVE_LOCAL'] = True
 db = SQLAlchemy(app)
@@ -360,3 +360,8 @@ def generate_xlsx(exam_id):
     response.headers['Content-Type'] = "application/octet-stream"
     response.headers['Content-Disposition'] = "inline; filename=" + filename
     return response
+
+
+# Create database file if not exists
+with app.app_context():
+    db.create_all()
