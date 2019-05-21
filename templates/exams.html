@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block styles %}
+{{super()}}
+<style type="text/css">
+	.exam-block {
+		display: block;
+		border: 1px #ccc solid;
+		padding: 5px;
+		border-radius: 5px;
+	}
+</style>
+{% endblock %}
+
+
+
+{% block app_content %}
+    <div class="row">
+	    <div class="col-sm-8">
+		    <h2>Exams</h2>
+
+		    {% if exams.__len__() == 0 %}
+		    	No exams yet. Create one below.
+		    {% endif %}
+
+		    <ul>
+		    {% for exam in exams %}
+		    	<li class="exam-block">
+		    		<a href="{{url_for('students', exam_id=exam.id)}}" class="exam-name">{{exam.name}}</a>
+			    	<br>
+			    	<span class="exam-description"> {{exam.description}} </span> 
+			    	<br>
+			    	<i>Date:</i> {{exam.date}}
+			    	<br>
+			    	<a class="btn btn-primary" href="{{url_for('edit_exam', exam_id=exam.id)}}">
+			    	Edit</a>
+		    	</li>
+		    {% endfor %}
+		    </ul>
+	    <div>
+    </div>
+
+    <hr>
+    <div class="row">
+	    <div class="col-sm-6">
+	    	<h3> Create Exam </h3>
+	    	<form action="{{url_for('add_exam')}}" method="post">
+	    		<div class="form-group">
+		    		<label for="name">Exam Name</label>
+		    		<input type="text" id="name" name="exam_name" class="form-control" required>
+		    	</div>
+
+	    		<div class="form-group">
+		    		<label for="desc">Exam Description</label>
+		    		<textarea id="desc" name="exam_description" class="form-control" ></textarea>
+		    	</div>
+
+	    		<div class="form-group">
+		    		<label for="date">Exam Date</label>
+		    		<input type="text" id="date" name="exam_date" class="form-control">
+		    	</div>
+
+		    	<div class="form-group">
+		    		<input type="submit" value="Submit" class="form-control" >
+		    	</div>
+	    	</form>
+	    </div>
+	</div>
+{% endblock %}

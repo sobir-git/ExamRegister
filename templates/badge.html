@@ -130,10 +130,12 @@
 				</tr>
 			</tbody>
 		</table>
-		<hr>
-		<div class="foot">
-			Санаи имтиҳон: 05.05.2019 соати 8:00
-		</div>
+		{% if student.exam.date %}
+			<hr>
+			<div class="foot">
+				Санаи имтиҳон: {{ student.exam.date }}
+			</div>
+		{% endif %}
 	</div>
 
 	<script type="text/javascript">

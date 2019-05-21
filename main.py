@@ -45,24 +45,90 @@ class Student(db.Model):
     birthday = db.Column(db.Date, nullable=False)
     photo = db.Column(db.String(80), nullable=False)
     language = db.Column(db.String(80), nullable=False)
+    exam_id = db.Column(db.Integer, db.ForeignKey('exam.id'))
 
     def __repr__(self):
         return '<Student %s %s>' % (self.name, self.surname)
 
 
+class Exam(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(128), nullable=False)
+    description = db.Column(db.String(256), nullable=True)
+    date = db.Column(db.String(80), nullable=True)
+    students = db.relationship('Student', backref="exam", lazy='dynamic')
+
+
+@app.route('/exams')
+def exams():
+    exams = Exam.query.all()
+    return render_template('exams.html', exams=exams)
+
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return redirect(url_for('exams'))
 
 
-@app.route('/register')
-def register():
-    return render_template('register_student.html', title="Register")
+@app.route('/add-exam', methods=['POST'])
+def add_exam():
+    exam_name = request.form.get('exam_name')
+    if not exam_name:
+        flash("Invalid Exam Name")
+        return 
+    exam_description = request.form.get('exam_description')
+    exam_date = request.form.get('exam_date')
+    exam = Exam(name=exam_name, description=exam_description, date=exam_date)
+    db.session.add(exam)
+    db.session.commit()
+
+    print(exam_name)
+    print(exam_description)
+    print(exam_date)
+    return redirect(url_for('exams'))
 
 
-@app.route('/add_student', methods=['POST'])
-def add_student():
+@app.route('/edit-exam/<int:exam_id>', methods=['GET', 'POST'])
+def edit_exam(exam_id):
+    exam = Exam.query.get(exam_id)
+    if exam is None:
+        flash("No such exam with ID=%s" % exam_id)
+        return
+
+    if request.method == 'GET':
+        return render_template('edit_exam.html', exam=exam)
+
+    elif request.method == 'POST':
+        exam_name = request.form.get('exam_name')
+        exam_description = request.form.get('exam_description')
+        exam_date = request.form.get('exam_date')
+        if not exam_name:
+            flash('Invalid Exam Name')
+
+        exam.name = exam_name
+        exam.description=exam_description
+        exam.date = exam_date
+        db.session.commit()
+
+        flash("Exam edited successfully!")
+        return redirect(url_for('exams'))
+
+
+@app.route('/register-student/<int:exam_id>')
+def register_student(exam_id):
+    exam = Exam.query.get(exam_id)
+    if exam is None:
+        return "No exam with ID=%s" % exam_id, 404
+    return render_template('register_student.html', exam=exam, title="Register")
+
+
+@app.route('/add_student/<int:exam_id>', methods=['POST'])
+def add_student(exam_id):
     form = request.form
+
+    exam=Exam.query.get(exam_id)
+    if exam is None:
+        return "No such exam with ID=%s" % exam_id
 
     required = ['name', 'surname', 'grade', 'school', 'birthday', 'address']
     for r in required:
@@ -103,7 +169,8 @@ def add_student():
 
     student = Student(name=name, surname=surname, father_name=father_name, father_surname=father_surname,
                       mother_name=mother_name, mother_surname=mother_surname, phone=phone, birthday=birthday,
-                      address=address, school=school, grade=grade, photo=filename, language=language)
+                      address=address, school=school, grade=grade, photo=filename, language=language,
+                      exam_id=exam_id)
     db.session.add(student)
     db.session.commit()
     print("Added student successfully.")
@@ -194,10 +261,13 @@ def badge(student_id):
     return render_template('badge.html', student=student, title="Badge")
 
 
-@app.route('/students')
-def students():
-    students = Student.query.all()
-    return render_template('students.html', students=students, title="Students")
+@app.route('/students/<int:exam_id>')
+def students(exam_id):
+    exam = Exam.query.get(exam_id)
+    if exam is None:
+        return "No exam with ID=%s" % exam_id, 404
+    students = Student.query.filter_by(exam_id=exam_id)
+    return render_template('students.html', students=students, title="Students", exam=exam)
 
 
 @app.route('/delete_student/<int:student_id>')
