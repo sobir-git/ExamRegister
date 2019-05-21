@@ -35,6 +35,9 @@
 			    	<br>
 			    	<a class="btn btn-primary" href="{{url_for('edit_exam', exam_id=exam.id)}}">
 			    	Edit</a>
+			    	<a class="btn btn-primary" href="{{url_for('generate_xlsx', exam_id=exam.id)+'?t=%s' % time.time()}}">
+			    	Generate Excel</a>
+			    	
 		    	</li>
 		    {% endfor %}
 		    </ul>

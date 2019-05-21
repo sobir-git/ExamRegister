@@ -1,5 +1,6 @@
 #project specific
 img/
+tmp/
 main.db
 test.db
 

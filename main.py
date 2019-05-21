@@ -1,10 +1,14 @@
 import uuid
 import os
-from flask import Flask, render_template, request, flash, redirect, url_for, send_from_directory
+from flask import Flask, render_template, request, flash, redirect, url_for, send_from_directory,\
+    safe_join
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from werkzeug.utils import secure_filename
 from datetime import date
+from collections import OrderedDict
+import xlsxwriter
+import time
 
 
 UPLOAD_FOLDER = 'img'
@@ -23,6 +27,9 @@ bootstrap = Bootstrap(app)
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.mkdir(UPLOAD_FOLDER)
+
+if not os.path.exists('tmp'):
+    os.mkdir('tmp')
 
 
 def allowed_file(filename):
@@ -62,7 +69,7 @@ class Exam(db.Model):
 @app.route('/exams')
 def exams():
     exams = Exam.query.all()
-    return render_template('exams.html', exams=exams)
+    return render_template('exams.html', exams=exams, time=time)
 
 
 @app.route('/')
@@ -284,3 +291,41 @@ def delete_student(student_id):
 @app.route('/student_photo/<filename>')
 def student_photo(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
+@app.route('/generate-xlsx/<int:exam_id>')
+def generate_xlsx(exam_id):
+    exam = Exam.query.get(exam_id)
+    if exam is None:
+        return "No such exam with ID=%s" % exam_id
+
+    students = Student.query.filter_by(exam_id=exam_id)
+
+    # Create a workbook and add a worksheet.
+    filename = safe_join('tmp', secure_filename('lfgs-%s.xlsx' % exam.name))
+    workbook = xlsxwriter.Workbook(filename)
+    worksheet = workbook.add_worksheet()
+
+    row=0
+    col=0
+    fields = [('ID', 'id'), ('Name', 'name'), ('Surname', 'surname'), 
+              ('Grade', 'grade'), ('School', 'school'), ('Address', 'address'), 
+              ('Birthday','birthday'), ('Phone', 'phone'), ('Language', 'language'),
+              ('Father Name', 'father_name'), ('Father Surname', 'father_surname'), 
+              ('Mother Name', 'mother_name'), ('Mother Surname', 'mother_surname')]
+
+    for field_name, _ in fields:
+        worksheet.write(row, col, field_name)
+        col += 1
+    row += 1
+
+    for student in students:
+        col = 0
+        for _, attr in fields:
+            worksheet.write(row, col, getattr(student, attr))
+            col += 1
+        row += 1
+
+    workbook.close()
+
+    return send_from_directory('.', filename, as_attachment=True)
