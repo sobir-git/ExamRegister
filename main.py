@@ -1,7 +1,7 @@
 import uuid
 import os
 from flask import Flask, render_template, request, flash, redirect, url_for, send_from_directory,\
-    safe_join
+    safe_join, make_response
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from werkzeug.utils import secure_filename
@@ -9,6 +9,7 @@ from datetime import date
 from collections import OrderedDict
 import xlsxwriter
 import time
+import io
 
 
 UPLOAD_FOLDER = 'img'
@@ -27,9 +28,6 @@ bootstrap = Bootstrap(app)
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.mkdir(UPLOAD_FOLDER)
-
-if not os.path.exists('tmp'):
-    os.mkdir('tmp')
 
 
 def allowed_file(filename):
@@ -302,9 +300,14 @@ def generate_xlsx(exam_id):
     students = Student.query.filter_by(exam_id=exam_id)
 
     # Create a workbook and add a worksheet.
-    filename = safe_join('tmp', secure_filename('lfgs-%s.xlsx' % exam.name))
-    workbook = xlsxwriter.Workbook(filename)
+    filename = secure_filename('%s-student-list.xlsx' % exam.name)
+    output = io.BytesIO()
+    workbook = xlsxwriter.Workbook(output, {'in_memory': True})
     worksheet = workbook.add_worksheet()
+
+    # Add a bold format to use to highlight cells.
+    bold = workbook.add_format({'bold': True})
+    date_format = workbook.add_format({'num_format': 'mmmm d yyyy'})
 
     row=0
     col=0
@@ -315,17 +318,45 @@ def generate_xlsx(exam_id):
               ('Mother Name', 'mother_name'), ('Mother Surname', 'mother_surname')]
 
     for field_name, _ in fields:
-        worksheet.write(row, col, field_name)
+        worksheet.write(row, col, field_name, bold)
         col += 1
     row += 1
 
     for student in students:
         col = 0
-        for _, attr in fields:
-            worksheet.write(row, col, getattr(student, attr))
-            col += 1
+
+        worksheet.write(row, col, student.id)
+        col += 1
+        worksheet.write(row, col, student.name)
+        col += 1
+        worksheet.write(row, col, student.surname)
+        col += 1
+        worksheet.write(row, col, student.grade)
+        col += 1
+        worksheet.write(row, col, student.school)
+        col += 1
+        worksheet.write(row, col, student.address)
+        col += 1
+        worksheet.write_datetime(row, col, student.birthday, date_format)
+        col += 1
+        worksheet.write(row, col, student.phone)
+        col += 1
+        worksheet.write(row, col, student.language)
+        col += 1
+        worksheet.write(row, col, student.father_name)
+        col += 1
+        worksheet.write(row, col, student.father_surname)
+        col += 1
+        worksheet.write(row, col, student.mother_name)
+        col += 1
+        worksheet.write(row, col, student.mother_surname)
+        col += 1
+
         row += 1
 
     workbook.close()
 
-    return send_from_directory('.', filename, as_attachment=True)
+    response = make_response(output.getvalue())
+    response.headers['Content-Type'] = "application/octet-stream"
+    response.headers['Content-Disposition'] = "inline; filename=" + filename
+    return response
